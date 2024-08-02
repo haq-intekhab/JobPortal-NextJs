@@ -5,16 +5,36 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { postNewJobFormControls, postNewJobFormData } from "@/utils";
 import CommonForm from "../common-form";
+import { PostJobAction } from "@/actions";
 
-function PostNewJob({ profileInfo }) {
+function PostNewJob({ profileInfo, user }) {
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [jobFormData, setJobFormData] = useState({
     ...postNewJobFormData,
     companyName: profileInfo?.recruiterInfo?.companyName,
   });
 
-  function handlePostNewBtnValid(){
-    return Object.keys(jobFormData).every(control => jobFormData[control].trim() !== "");
+  function handlePostNewBtnValid() {
+    return Object.keys(jobFormData).every(
+      (control) => jobFormData[control].trim() !== ""
+    );
+  }
+
+  async function createNewJob() {
+    await PostJobAction(
+      {
+        ...jobFormData,
+        recruiterId: user?.id,
+        applicant: [],
+      },
+      "/jobs"
+    );
+
+    setJobFormData({
+      ...postNewJobFormData,
+      companyName: profileInfo?.recruiterInfo?.companyName,
+    });
+    setShowJobDialog(false)
   }
 
   return (
@@ -44,6 +64,7 @@ function PostNewJob({ profileInfo }) {
               setFormData={setJobFormData}
               formControls={postNewJobFormControls}
               isBtnDisabled={!handlePostNewBtnValid()}
+              action={createNewJob}
             />
           </div>
         </DialogContent>
