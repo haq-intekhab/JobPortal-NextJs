@@ -1,6 +1,7 @@
  "use server"
 
 import connectToDB from "@/database"
+import Application from "@/models/application";
 import Job from "@/models/job";
 import Profile from "@/models/profile";
 import { revalidatePath } from "next/cache";
@@ -29,7 +30,7 @@ export async function PostJobAction(formData,pathToRevalidate){
     revalidatePath(pathToRevalidate);
 }
 
-// fetch jon action
+// fetch job action
 // recruiter
 export async function fetchJobsForRecruiterAction(id){
     await connectToDB();
@@ -41,5 +42,36 @@ export async function fetchJobsForRecruiterAction(id){
 export async function fetchJobsForCandidateAction(){
     await connectToDB();
     const result = await Job.find({});
+    return JSON.parse(JSON.stringify(result));
+}
+
+// create job Application
+export async function createJobApplicationAction(data,pathToRevalidate){
+    await connectToDB();
+    await Application.create(data);
+    revalidatePath(pathToRevalidate);
+}
+
+// fetch job Application
+// candidate
+export async function fetchJobApplicationsForCandidate(candidateID){
+    await connectToDB();
+    const result = await Application.find({candidateUserId : candidateID});
+    return JSON.parse(JSON.stringify(result));
+}
+
+// recruiter
+export async function fetchJobApplicationsForRecruiter(recruiterID){
+    await connectToDB();
+    const result = await Application.find({recruiterUserId : recruiterID});
+    return JSON.parse(JSON.stringify(result));
+}
+
+// update job Application
+
+// get Candidate details by ID
+export async function getCandidateDetailsByIdSction(candidateId){
+    await connectToDB();
+    const result = await Profile.findOne({userId : candidateId})
     return JSON.parse(JSON.stringify(result));
 }

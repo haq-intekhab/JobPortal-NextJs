@@ -48,7 +48,7 @@ function Header({ user,profileInfo }) {
   ];
 
   return (
-    <div className="w-full border-b shadow-sm">
+    <div className="w-full border-b shadow-sm fixed bg-white top-0">
       <header className="flex h-16 w-full shrink-0 items-center p-6 lg:px-8">
         <Sheet isOpen={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>

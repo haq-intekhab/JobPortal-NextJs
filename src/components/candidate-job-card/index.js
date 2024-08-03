@@ -6,17 +6,32 @@ import JobIcon from "../job-icon";
 import { Button } from "../ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
+import { createJobApplicationAction } from "@/actions";
 
-function CandidateJobCard({ jobItem }) {
+function CandidateJobCard({ jobItem, profileInfo, jobApplications }) {
   const [showJobDetailsDrawer, setShowJobDetailsDrawer] = useState(false);
+  console.log(jobApplications, "jobApplications");
+
+  async function handleJobApply() {
+    await createJobApplicationAction(
+      {
+        recruiterUserId: jobItem?.recruiterId,
+        name: profileInfo?.candidateInfo?.name,
+        email: profileInfo?.email,
+        candidateUserId: profileInfo?.userId,
+        status: ["Applied"],
+        jobId: jobItem._id,
+        jobAppliedDate: new Date().toLocaleDateString(),
+      },
+      "/jobs"
+    );
+    setShowJobDetailsDrawer(false);
+  }
 
   return (
     <Fragment>
@@ -44,8 +59,22 @@ function CandidateJobCard({ jobItem }) {
                 {jobItem?.title}
               </DrawerTitle>
               <div className="flex gap-3">
-                <Button className="flex h-11 items-center justify-center px-5 mt-6">
-                  Apply
+                <Button
+                  onClick={handleJobApply}
+                  disabled={
+                    jobApplications.findIndex(
+                      (item) => item.jobId === jobItem?._id
+                    ) > -1
+                      ? true
+                      : false
+                  }
+                  className="disabled:opacity-65 flex h-11 items-center justify-center px-5 mt-6"
+                >
+                  {jobApplications.findIndex(
+                    (item) => item.jobId === jobItem?._id
+                  ) > -1
+                    ? "Applied"
+                    : "Apply"}
                 </Button>
                 <Button
                   onClick={() => setShowJobDetailsDrawer(false)}
@@ -73,7 +102,9 @@ function CandidateJobCard({ jobItem }) {
           <div className="flex gap-4 mt-6">
             {jobItem?.skills.split(",").map((skillItem) => (
               <div className="w-[100px] flex justify-center items-center h-[35px] bg-black rounded-[4px]">
-                <h2 className="text-[13px] font-medium text-white">{skillItem}</h2>
+                <h2 className="text-[13px] font-medium text-white">
+                  {skillItem}
+                </h2>
               </div>
             ))}
           </div>

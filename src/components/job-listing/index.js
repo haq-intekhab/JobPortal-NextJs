@@ -4,9 +4,10 @@ import CandidateJobCard from "../candidate-job-card";
 import PostNewJob from "../post-new-job";
 import RecruiterJobCard from "../recruiter-job-card";
 
-function JobListing({ user, profileInfo, jobList }) {
+function JobListing({ user, profileInfo, jobList, jobApplications }) {
+
   return (
-    <div className="mx-auto max-w-7xl ">
+    <div className="mx-auto max-w-7xl mt-[70px]">
       <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6 px-6 lg:px-8">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900">
           {profileInfo?.role === "candidate"
@@ -29,9 +30,17 @@ function JobListing({ user, profileInfo, jobList }) {
                 {jobList && jobList.length > 0
                   ? jobList.map((jobItem) =>
                       profileInfo?.role === "candidate" ? (
-                        <CandidateJobCard jobItem={jobItem}/>
+                        <CandidateJobCard
+                          jobItem={jobItem}
+                          profileInfo={profileInfo}
+                          jobApplications={jobApplications}
+                        />
                       ) : (
-                        <RecruiterJobCard jobItem={jobItem}/>
+                        <RecruiterJobCard
+                          jobItem={jobItem}
+                          profileInfo={profileInfo}
+                          jobApplications={jobApplications}
+                        />
                       )
                     )
                   : null}
