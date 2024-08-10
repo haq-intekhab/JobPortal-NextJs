@@ -1,10 +1,20 @@
 "use client";
 
-import { getCandidateDetailsByIdSction } from "@/actions";
+import {
+  getCandidateDetailsByIdSction,
+  updateJobApplicationAction,
+} from "@/actions";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogFooter } from "../ui/dialog";
+import { createClient } from "@supabase/supabase-js";
+import { get } from "mongoose";
 
 const { Fragment } = require("react");
+
+const supabaseClient = createClient(
+  "https://mhsewkstowqkpyubvtdp.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oc2V3a3N0b3dxa3B5dWJ2dGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI1OTMyMjksImV4cCI6MjAzODE2OTIyOX0.Kj8bv-VuJwxQYaeZuT--QlMKDMCYxkO1catr7tHiHkM"
+);
 
 function CandidateList({
   currentCandidiateDetails,
@@ -23,6 +33,40 @@ function CandidateList({
   }
 
   console.log(currentCandidiateDetails);
+
+  function handlePreviewResume() {
+    const { data } = supabaseClient.storage
+      .from("job-elevate-public")
+      .getPublicUrl(currentCandidiateDetails?.candidateInfo?.resume);
+    console.log(data, "resume");
+
+    const a = document.createElement("a");
+    a.href = data?.publicUrl;
+    a.setAttribute("download", "resume.pdf");
+    a.setAttribute("target", "_blank");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  async function handleUpdateJobStatus(getCurrentStatus) {
+    let cpyJobApplicants = [...jobApplications]; // Make sure this is an array copy
+    const indexOfCurrentJobApplication = cpyJobApplicants.findIndex(
+      (item) => item.candidateUserId === currentCandidiateDetails?.userId
+    );
+
+    const jobApplicantsToUpdate = {
+      ...cpyJobApplicants[indexOfCurrentJobApplication],
+      status:
+        cpyJobApplicants[indexOfCurrentJobApplication].status.concat(
+          getCurrentStatus
+        ),
+    };
+    console.log(jobApplicantsToUpdate, "jobApplicantsToUpdate");
+    await updateJobApplicationAction(jobApplicantsToUpdate, "/jobs");
+    console.log(jobApplications, "jobApplications");
+  }
+
   return (
     <Fragment>
       <div className="grid grid-cols-1 gap-3 p-10 md:grid-cols-2 lg:grid-cols-3">
@@ -34,7 +78,9 @@ function CandidateList({
                     <h3 className="text-lg font-bold">
                       {jobApplicantItem?.name}
                     </h3>
-                    <p className="text-md font-light overflow-hidden">{jobApplicantItem?.email}</p>
+                    <p className="text-md font-light overflow-hidden">
+                      {jobApplicantItem?.email}
+                    </p>
                   </div>
                   <Button
                     onClick={() =>
@@ -106,21 +152,78 @@ function CandidateList({
                 ))}
             </div>
           </div>
-          <DialogFooter>
-            <div className="flex justify-between">
-              <Button className="flex h-11 items-center justify-center px-5 mt-6">
-                Resume
+          <div className="flex justify-between">
+            <Button
+              onClick={handlePreviewResume}
+              className="flex h-11 items-center justify-center px-5 mt-6"
+            >
+              Resume
+            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => handleUpdateJobStatus("selected")}
+                className="disabled:opacity-65 flex h-11 items-center justify-center px-5 mt-6"
+                disabled={
+                  jobApplications
+                    .find(
+                      (item) =>
+                        item.candidateUserId ===
+                        currentCandidiateDetails?.userId
+                    )
+                    ?.status.includes("selected") ||
+                  jobApplications
+                    .find(
+                      (item) =>
+                        item.candidateUserId ===
+                        currentCandidiateDetails?.userId
+                    )
+                    ?.status.includes("rejected")
+                    ? true
+                    : false
+                }
+              >
+                {jobApplications
+                  .find(
+                    (item) =>
+                      item.candidateUserId === currentCandidiateDetails?.userId
+                  )
+                  ?.status.includes("selected")
+                  ? "Selected"
+                  : "Select"}
               </Button>
-              <div className="flex gap-3">
-                <Button className="flex h-11 items-center justify-center px-5 mt-6">
-                  Select
-                </Button>
-                <Button className="flex h-11 items-center justify-center px-5 mt-6">
-                  Reject
-                </Button>
-              </div>
+              <Button
+                onClick={() => handleUpdateJobStatus("rejected")}
+                className="disabled:opacity-65 flex h-11 items-center justify-center px-5 mt-6"
+                disabled={
+                  jobApplications
+                    .find(
+                      (item) =>
+                        item.candidateUserId ===
+                        currentCandidiateDetails?.userId
+                    )
+                    ?.status.includes("selected") ||
+                  jobApplications
+                    .find(
+                      (item) =>
+                        item.candidateUserId ===
+                        currentCandidiateDetails?.userId
+                    )
+                    ?.status.includes("rejected")
+                    ? true
+                    : false
+                }
+              >
+                {jobApplications
+                  .find(
+                    (item) =>
+                      item.candidateUserId === currentCandidiateDetails?.userId
+                  )
+                  ?.status.includes("rejected")
+                  ? "Rejected"
+                  : "Reject"}
+              </Button>
             </div>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </Fragment>
