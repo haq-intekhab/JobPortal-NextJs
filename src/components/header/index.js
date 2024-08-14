@@ -48,7 +48,7 @@ function Header({ user,profileInfo }) {
   ];
 
   return (
-    <div className="w-full border-b shadow-sm fixed bg-white top-0">
+    <div className="w-full border-b shadow-sm fixed bg-white top-0 z-10">
       <header className="flex h-16 w-full shrink-0 items-center p-6 lg:px-8">
         <Sheet isOpen={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
@@ -85,6 +85,7 @@ function Header({ user,profileInfo }) {
               <Link
                 className="group inline-flex h-9 w-max items-center rounded-md bg-white px-4 py-2 text-sm font-medium"
                 href={menuItem.path}
+                onClick={()=>sessionStorage.removeItem('filterParams')}
               >
                 {menuItem.label}
               </Link>

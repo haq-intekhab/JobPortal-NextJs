@@ -82,7 +82,7 @@ function CommonForm({
   return (
     <form action={action}>
       {formControls.map((control) => renderInputByComponentType(control))}
-      <div className="mt-6,w-full">
+      <div className="mt-6 w-full -z-10">
         <Button
           type={btnType || "submit"}
           className="disabled:opacity-60 flex h-11 items-center justify-center px-5 mt-6"

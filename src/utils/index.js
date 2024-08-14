@@ -1,4 +1,4 @@
-import { Description } from "@radix-ui/react-dialog";
+import qs from "query-string";
 
 export const recruiterOnboardFromControl = [
   {
@@ -138,6 +138,24 @@ export const candidateInitialOnboardFormData = {
   githubProfile: "",
 };
 
+export const candidateInitialFormData = {
+  name: "",
+  currentCompany: "",
+  currentJobLocation: "",
+  previousCompanies: "",
+  currentSalary: "",
+  noticePeriod: "",
+  preferedJobLocation: "",
+  currentSalary: "",
+  skills: "",
+  totalExperience: "",
+  collage: "",
+  collageLocation: "",
+  graduatedYear: "",
+  linkedinProfile: "",
+  githubProfile: "",
+};
+
 export const postNewJobFormControls = [
   {
     label: "Company Name",
@@ -212,3 +230,19 @@ export const filterMenuDataArray = [
     label: "Location",
   },
 ];
+
+export function formUrlQuery({ params, dataToAdd }) {
+  let currentUrl = qs.parse(params);
+
+  if (Object.keys(dataToAdd).length > 0) {
+    Object.keys(dataToAdd).map((key) => {
+      if (dataToAdd[key].length === 0) delete currentUrl[key];
+      else currentUrl[key] = dataToAdd[key].join(",");
+    });
+  }
+
+  return qs.stringifyUrl({
+    url: window.location.pathname,
+    query: currentUrl,
+  }, { skipNull: true });
+}

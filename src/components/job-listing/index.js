@@ -1,6 +1,6 @@
 "use client";
 
-import { filterMenuDataArray } from "@/utils";
+import { filterMenuDataArray, formUrlQuery } from "@/utils";
 import CandidateJobCard from "../candidate-job-card";
 import PostNewJob from "../post-new-job";
 import RecruiterJobCard from "../recruiter-job-card";
@@ -12,7 +12,8 @@ import {
   MenubarTrigger,
 } from "../ui/menubar";
 import { Label } from "../ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams,useRouter } from "next/navigation";
 
 function JobListing({
   user,
@@ -22,6 +23,8 @@ function JobListing({
   filterCategories,
 }) {
   const [filterParams, setFilterParams] = useState({});
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   function handleFilter(getSectionId, getCurrentOption) {
     let cpyFilterParams = { ...filterParams };
@@ -42,6 +45,21 @@ function JobListing({
     setFilterParams(cpyFilterParams);
     sessionStorage.setItem("filterParams", JSON.stringify(cpyFilterParams));
   }
+
+  useEffect(() => {
+    setFilterParams(JSON.parse(sessionStorage.getItem("filterParams")))
+  },[]);
+
+  useEffect(() => {
+    if(filterParams && Object.keys(filterParams).length > 0) {
+      let url = '';
+      url = formUrlQuery({
+        params: searchParams.toString(),
+        dataToAdd: filterParams,
+      })
+      router.push(url,{scroll:false});
+    }
+  }, [filterParams,searchParams]);
 
   const filterMenus = filterMenuDataArray.map((item) => ({
     id: item.id,
