@@ -246,3 +246,21 @@ export function formUrlQuery({ params, dataToAdd }) {
     query: currentUrl,
   }, { skipNull: true });
 }
+
+export const membershipPlans = [
+  {
+    heading : 'Silved',
+    price : 500,
+    type : 'basic',
+  },
+  {
+    heading : 'Gold',
+    price : 1000,
+    type : 'teams',
+  },
+  {
+    heading : 'Platinum',
+    price : 5000,
+    type : 'enterprise',
+  }
+]

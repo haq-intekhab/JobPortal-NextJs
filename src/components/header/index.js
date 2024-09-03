@@ -76,7 +76,7 @@ function Header({ user,profileInfo }) {
             </div>
           </SheetContent>
         </Sheet>
-        <Link href="/" className="hidden lg:flex mr-6">
+        <Link href="/" className="hidden font-bold text-3xl lg:flex mr-6">
           JOBELEVATE
         </Link>
         <nav className="ml-auto hidden lg:flex gap-6">
