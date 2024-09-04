@@ -178,3 +178,17 @@ export async function createPriceIdAction(data) {
 }
 
 // create payment logic
+export async function createPaymentAction(data) {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: data?.lineItems,
+    mode: "subscription",
+    success_url: 'http://localhost:3000/membership' + "?status=success",
+    cancel_url: 'http://localhost:3000/membership' + "?status=cancel",
+  });
+
+  return {
+    success: true,
+    id: session?.id,
+  };
+}

@@ -13,7 +13,7 @@ import {
 } from "../ui/menubar";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
-import { useSearchParams,useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 function JobListing({
   user,
@@ -47,19 +47,19 @@ function JobListing({
   }
 
   useEffect(() => {
-    setFilterParams(JSON.parse(sessionStorage.getItem("filterParams")))
-  },[]);
+    setFilterParams(JSON.parse(sessionStorage.getItem("filterParams")));
+  }, []);
 
   useEffect(() => {
-    if(filterParams && Object.keys(filterParams).length > 0) {
-      let url = '';
+    if (filterParams && Object.keys(filterParams).length > 0) {
+      let url = "";
       url = formUrlQuery({
         params: searchParams.toString(),
         dataToAdd: filterParams,
-      })
-      router.push(url,{scroll:false});
+      });
+      router.push(url, { scroll: false });
     }
-  }, [filterParams,searchParams]);
+  }, [filterParams, searchParams]);
 
   const filterMenus = filterMenuDataArray.map((item) => ({
     id: item.id,
@@ -112,7 +112,7 @@ function JobListing({
               ))}
             </Menubar>
           ) : (
-            <PostNewJob user={user} profileInfo={profileInfo} />
+            <PostNewJob jobList={jobList} user={user} profileInfo={profileInfo} />
           )}
         </div>
       </div>

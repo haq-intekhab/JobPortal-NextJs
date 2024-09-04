@@ -249,7 +249,7 @@ export function formUrlQuery({ params, dataToAdd }) {
 
 export const membershipPlans = [
   {
-    heading : 'Silved',
+    heading : 'Silver',
     price : 500,
     type : 'basic',
   },

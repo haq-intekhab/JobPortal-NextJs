@@ -6,8 +6,12 @@ import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { postNewJobFormControls, postNewJobFormData } from "@/utils";
 import CommonForm from "../common-form";
 import { PostJobAction } from "@/actions";
+import { useToast } from "@/components/hooks/use-toast";
+import Link from "next/link";
 
-function PostNewJob({ profileInfo, user }) {
+function PostNewJob({ profileInfo, user, jobList }) {
+  console.log(jobList, "joblist");
+
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [jobFormData, setJobFormData] = useState({
     ...postNewJobFormData,
@@ -18,6 +22,22 @@ function PostNewJob({ profileInfo, user }) {
     return Object.keys(jobFormData).every(
       (control) => jobFormData[control].trim() !== ""
     );
+  }
+
+  const { toast } = useToast();
+
+  function handleAddNewJob() {
+    console.log("inside clickt");
+    if (!profileInfo?.isPremiumUser && jobList.length >= 2) {
+      toast({
+        variant: "destructive",
+        title: "You can post max 2 jobs",
+        description: "Please opt for premium plan to post more jobs",
+        action: <Link href={"/membership"}>See Plans</Link>,
+      });
+      return;
+    }
+    setShowJobDialog(true);
   }
 
   async function createNewJob() {
@@ -34,14 +54,14 @@ function PostNewJob({ profileInfo, user }) {
       ...postNewJobFormData,
       companyName: profileInfo?.recruiterInfo?.companyName,
     });
-    setShowJobDialog(false)
+    setShowJobDialog(false);
   }
 
   return (
     <div>
       <Button
-        onClick={() => setShowJobDialog(true)}
-        className="disabled:opacity-60 flex h-11 items-center justify-center px-5 mt-6"
+        onClick={handleAddNewJob}
+        className="flex h-11 items-center justify-center px-5 mt-6"
       >
         Post A Job
       </Button>
